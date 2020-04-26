@@ -96,6 +96,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemySpeed: 10
+  waypoints: []
 --- !u!114 &114206631136057760
 MonoBehaviour:
   m_ObjectHideFlags: 0

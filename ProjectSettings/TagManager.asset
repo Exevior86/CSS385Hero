@@ -4,12 +4,13 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - nsWall
   - North
   - South
   - East
   - West
   - Egg
+  - Waypoint
+  - Enemy
   layers:
   - Default
   - TransparentFX
