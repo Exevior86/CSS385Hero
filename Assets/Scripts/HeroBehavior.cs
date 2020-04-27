@@ -54,13 +54,39 @@ public class HeroBehavior : MonoBehaviour {
     {
     }
 
+    private void HandleMouseMovement()
+    {
+        // cast to Vector2 to ignore z-component
+        transform.position = (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition);
+    }
+
+    private void HandleKeyMovement()
+    {
+        if (Input.GetKey(KeyCode.UpArrow))
+        {
+            if (mHeroSpeed < 90)
+                mHeroSpeed += 1;
+        }
+        if (Input.GetKey(KeyCode.DownArrow))
+        {
+            if (mHeroSpeed > -90)
+                mHeroSpeed -= 1;
+        }
+        if (Input.GetKey(KeyCode.P))
+        {
+            mHeroSpeed = 0;
+        }
+        transform.position += direction * mHeroSpeed * Time.deltaTime;
+    }
+
     private void UpdateMotion() {
 
-        if(Input.GetKey(KeyCode.M))
+        if(Input.GetKeyDown(KeyCode.M))
         {
-
+            onMouse = !onMouse;
         }
 
+        // allow rotation change whether in mouse mode or key mode
         if (Input.GetKey(KeyCode.A))
         {
             transform.Rotate(0, 0, kHeroRotateSpeed);
@@ -71,21 +97,15 @@ public class HeroBehavior : MonoBehaviour {
             transform.Rotate(0, 0, -kHeroRotateSpeed);
             direction = transform.up;
         }
-        if (Input.GetKey(KeyCode.UpArrow))
+        
+        if(onMouse)
         {
-            if(mHeroSpeed < 90)
-                mHeroSpeed += 1;
+            HandleMouseMovement();
         }
-        if (Input.GetKey(KeyCode.DownArrow))
+        else
         {
-            if(mHeroSpeed > -90)
-                mHeroSpeed -= 1;
+            HandleKeyMovement();
         }
-        if (Input.GetKey(KeyCode.P))
-        {
-            mHeroSpeed = 0;
-        }
-        transform.position += direction * mHeroSpeed * Time.deltaTime;
     }
     
     private void ProcessEggSpwan() {
