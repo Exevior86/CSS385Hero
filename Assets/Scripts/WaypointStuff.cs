@@ -31,5 +31,27 @@ public class WaypointStuff : MonoBehaviour
                 this.GetComponent<Renderer>().material.color = new Color(1.0f, 1.0f, 1.0f, .25f * shotCount);
             }
         }
+        if(collision.gameObject.CompareTag("East"))
+        {
+            if(transform.position.x < 0)
+            {
+                transform.position = new Vector3(transform.position.x + 5, transform.position.y, transform.position.z); ;
+            }
+            else
+            {
+                transform.position = new Vector3(transform.position.x - 5, transform.position.y, transform.position.z); ;
+            }
+        }
+        if(collision.gameObject.CompareTag("North"))
+        {
+            if (transform.position.y < 0)
+            {
+                transform.position = new Vector3(transform.position.x, transform.position.y + 5, transform.position.z); ;
+            }
+            else
+            {
+                transform.position = new Vector3(transform.position.x - 5, transform.position.y - 5, transform.position.z); ;
+            }
+        }
     }
 }

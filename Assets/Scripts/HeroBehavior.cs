@@ -7,7 +7,7 @@ public class HeroBehavior : MonoBehaviour {
     public float mHeroSpeed = 20f;
     private const float kHeroRotateSpeed = 1f;
 
-    public static float cooldown = .3f;
+    public static float cooldown = .2f;
     public static float cooldownTimer = 0;
 
     public Vector2 pos;
@@ -54,13 +54,42 @@ public class HeroBehavior : MonoBehaviour {
     {
     }
 
+    private void HandleMouseMovement()
+    {
+        // cast to Vector2 to ignore z-component
+        transform.position = (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition);
+    }
+
+<<<<<<< HEAD
+=======
+    private void HandleKeyMovement()
+    {
+        if (Input.GetKey(KeyCode.UpArrow))
+        {
+            if (mHeroSpeed < 90)
+                mHeroSpeed += 1;
+        }
+        if (Input.GetKey(KeyCode.DownArrow))
+        {
+            if (mHeroSpeed > -90)
+                mHeroSpeed -= 1;
+        }
+        if (Input.GetKey(KeyCode.P))
+        {
+            mHeroSpeed = 0;
+        }
+        transform.position += direction * mHeroSpeed * Time.deltaTime;
+    }
+
     private void UpdateMotion() {
 
-        if(Input.GetKey(KeyCode.M))
+        if(Input.GetKeyDown(KeyCode.M))
         {
-
+            onMouse = !onMouse;
         }
 
+        // allow rotation change whether in mouse mode or key mode
+>>>>>>> abdd6b18412a71931ced28b96a1f653bdabdd77c
         if (Input.GetKey(KeyCode.A))
         {
             transform.Rotate(0, 0, kHeroRotateSpeed);
@@ -71,21 +100,15 @@ public class HeroBehavior : MonoBehaviour {
             transform.Rotate(0, 0, -kHeroRotateSpeed);
             direction = transform.up;
         }
-        if (Input.GetKey(KeyCode.UpArrow))
+        
+        if(onMouse)
         {
-            if(mHeroSpeed < 90)
-                mHeroSpeed += 1;
+            HandleMouseMovement();
         }
-        if (Input.GetKey(KeyCode.DownArrow))
+        else
         {
-            if(mHeroSpeed > -90)
-                mHeroSpeed -= 1;
+            HandleKeyMovement();
         }
-        if (Input.GetKey(KeyCode.P))
-        {
-            mHeroSpeed = 0;
-        }
-        transform.position += direction * mHeroSpeed * Time.deltaTime;
     }
     
     private void ProcessEggSpwan() {
@@ -108,12 +131,12 @@ public class HeroBehavior : MonoBehaviour {
 
     public void Shoot()
     {
-        //Vector2 actualBulletDirection = (relativeToRotation) ? (Vector2)(Quaternion.Euler(0, 0, transform.eulerAngles.z) * shootDirection) : shootDirection;
         GameObject newObject = Instantiate<GameObject>(prefabToSpawn);
         newObject.transform.position = this.transform.position;
         newObject.transform.eulerAngles = new Vector3(0f, 0f, Angle(direction));
 
         Rigidbody2D rigidbody2D = newObject.GetComponent<Rigidbody2D>();
+
         if (rigidbody2D != null)
         {
             rigidbody2D.AddForce(transform.up * shootSpeed, ForceMode2D.Impulse);
