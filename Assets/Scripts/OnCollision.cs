@@ -8,8 +8,7 @@ public class OnCollision : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("North") || collision.gameObject.CompareTag("South")
-            || collision.gameObject.CompareTag("East") || collision.gameObject.CompareTag("West"))
+        if (!collision.gameObject.CompareTag("Player"))
         {
             Destroy(gameObject);
         }

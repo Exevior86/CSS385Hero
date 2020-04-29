@@ -5,93 +5,106 @@ using UnityEngine;
 public class Movement : MonoBehaviour
 {
     public GameObject Plane;
-    public int shotCount = 3;
     public float enemySpeed = 10f;
     private int shotCount = 4;
-    public static GameObject[] waypoints;
+    private GameController gameController = null;
+    private GameObject[] waypoints;
     Vector3 direction = Vector3.zero;
     int counter;
-    public bool random = false;
+    private const float kRotationSpeed = 1;
 
     // Update is called once per frame
     private void Start()
     {
-        waypoints = GameObject.FindGameObjectsWithTag("Waypoint");
         counter = Random.Range(0, 6);
+
+        gameController = GameObject.Find("GameController").GetComponent<GameController>();
+        Debug.Assert(gameController != null);
+        waypoints = gameController.getWayPoints();
+
+        SetToRandomLocation();
 
         direction = waypoints[counter].transform.position - transform.position;
         direction = direction.normalized;
         GetComponent<Rigidbody2D>().velocity = new Vector2(direction.x * enemySpeed, direction.y * enemySpeed);
     }
 
+
     void Update()
     {
-        waypoints = GameObject.FindGameObjectsWithTag("Waypoint");
-        direction = waypoints[counter].transform.position - transform.position;
-        direction = direction.normalized;
+        Vector3 newDirection = (waypoints[counter].transform.position - transform.position).normalized;
+
+        direction = Vector3.Lerp(direction, newDirection, Time.deltaTime * kRotationSpeed);
+
         GetComponent<Rigidbody2D>().velocity = new Vector2(direction.x * enemySpeed, direction.y * enemySpeed);
         transform.up = direction;
-        if (Input.GetKeyDown(KeyCode.J))
-        {
-            random = !random;
-        }
+    }
+
+    private void SetToRandomLocation()
+    {
+        //Vector3 position = gameObject.transform.position;
+
+        //int ranX = Random.Range(-15, 16);
+        //int ranY = Random.Range(-15, 16);
+
+        //transform.position = new Vector3(position.x + ranX, position.y + ranY, position.z);
+
+        // appoximately the world area. Should be a systematically-computed static somewhere
+        int newX = Random.Range(-50, 50);
+        int newY = Random.Range(-30, 30);
+
+        transform.position = new Vector3(newX, newY, transform.position.z);
     }
 
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Egg"))
         {
-            Vector3 position = gameObject.transform.position;
             shotCount--;
             this.GetComponent<Renderer>().material.color = new Color(1.0f, 1.0f, 1.0f, .25f * shotCount);
 
             if (shotCount <= 0)
             {
-                int ranX = Random.Range(-15, 16);
-                int ranY = Random.Range(-15, 16);
-
-                transform.position = new Vector3(position.x + ranX, position.y + ranY, position.z);
+                SetToRandomLocation();
                 shotCount = 4;
                 this.GetComponent<Renderer>().material.color = new Color(1.0f, 1.0f, 1.0f, .25f * shotCount);
             }
         }
-        if (collision.gameObject.CompareTag("Waypoint") && random == false)
+        else if (collision.gameObject.CompareTag("Waypoint"))
         {
-            counter--;
-            if (counter < 0)
+            if (collision.gameObject == waypoints[counter])
             {
-                counter = 5;
-            }
-            direction = waypoints[counter].transform.position - transform.position;
-            direction = direction.normalized;           
-        }
-        else if (collision.gameObject.CompareTag("Waypoint") && random == true)
-        {
-            int ran = Random.Range(0, 6);
-            if(ran == counter)
-            {
-                ran--;
-                if (ran < 0)
+                if (!gameController.GetRandomWaypoints())
                 {
-                    ran = 5;
+                    counter++;
+                    if (counter > 5)
+                    {
+                        counter = 0;
+                    }
+                }
+                else
+                {
+                    int ran = Random.Range(0, 6);
+                    if (ran == counter)
+                    {
+                        ran--;
+                        if (ran < 0)
+                        {
+                            ran = 5;
+                        }
+                    }
+
+                    counter = ran;
                 }
             }
 
-            counter = ran;
-
-            direction = waypoints[counter].transform.position - transform.position;
-            direction = direction.normalized;
+                   
         }
-        else if(collision.gameObject.CompareTag("Egg"))
-        {
-            shotCount--;
-            this.GetComponent<Renderer>().material.color = new Color(1.0f, 1.0f, 1.0f, .25f * shotCount);
 
-            if(shotCount <= 0)
-            {
-                Destroy(this.gameObject);
-                RespawnPlane();
-            }
+        else if (collision.gameObject.CompareTag("Player"))
+        {
+            gameController.IncrementNumEnemiesTouched();
+            SetToRandomLocation();
         }
     }
 

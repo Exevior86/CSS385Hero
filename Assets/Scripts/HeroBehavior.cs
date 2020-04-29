@@ -12,7 +12,6 @@ public class HeroBehavior : MonoBehaviour {
 
     public Vector2 pos;
     
-    public bool onMouse = false;
     public GameObject prefabToSpawn;
     public float shootSpeed = 40f;
     public Vector2 shootDirection = new Vector2(1f, 1f);
@@ -20,9 +19,14 @@ public class HeroBehavior : MonoBehaviour {
 
     Rigidbody2D myHeroBody;
 
+    private GameController gameController = null;
+
     // Use this for initialization
 
     void Start () {
+        gameController = GameObject.Find("GameController").GetComponent<GameController>();
+        Debug.Assert(gameController != null);
+
         myHeroBody = GetComponent<Rigidbody2D>();
         myHeroBody.velocity = direction;
     }
@@ -44,11 +48,6 @@ public class HeroBehavior : MonoBehaviour {
             transform.up = new Vector3(-transform.up.x, transform.up.y, transform.up.z);
             direction.Set(transform.up.x, direction.y, direction.z);
         }
-        if(collision.gameObject.CompareTag("Enemy"))
-        {
-            Destroy(collision.gameObject);
-            //EnemiesTouched++;
-        }
     }
     void OnCollisionEnter2D(Collision2D collision)
     {
@@ -63,12 +62,12 @@ public class HeroBehavior : MonoBehaviour {
 
     private void HandleKeyMovement()
     {
-        if (Input.GetKey(KeyCode.UpArrow))
+        if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
         {
             if (mHeroSpeed < 90)
                 mHeroSpeed += 1;
         }
-        if (Input.GetKey(KeyCode.DownArrow))
+        if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
         {
             if (mHeroSpeed > -90)
                 mHeroSpeed -= 1;
@@ -84,7 +83,7 @@ public class HeroBehavior : MonoBehaviour {
 
         if(Input.GetKeyDown(KeyCode.M))
         {
-            onMouse = !onMouse;
+            gameController.ToggleUsingMouseControl();
         }
 
         // allow rotation change whether in mouse mode or key mode
@@ -99,7 +98,7 @@ public class HeroBehavior : MonoBehaviour {
             direction = transform.up;
         }
         
-        if(onMouse)
+        if(gameController.GetUsingMouseControl())
         {
             HandleMouseMovement();
         }
