@@ -7,6 +7,7 @@ public class Movement : MonoBehaviour
     public GameObject Plane;
     public int shotCount = 3;
     public float enemySpeed = 10f;
+    private int shotCount = 4;
     public static GameObject[] waypoints;
     Vector3 direction = Vector3.zero;
     int counter;
@@ -26,6 +27,8 @@ public class Movement : MonoBehaviour
     void Update()
     {
         waypoints = GameObject.FindGameObjectsWithTag("Waypoint");
+        direction = waypoints[counter].transform.position - transform.position;
+        direction = direction.normalized;
         GetComponent<Rigidbody2D>().velocity = new Vector2(direction.x * enemySpeed, direction.y * enemySpeed);
         transform.up = direction;
         if (Input.GetKeyDown(KeyCode.J))
@@ -62,7 +65,7 @@ public class Movement : MonoBehaviour
             direction = waypoints[counter].transform.position - transform.position;
             direction = direction.normalized;           
         }
-        else
+        else if (collision.gameObject.CompareTag("Waypoint") && random == true)
         {
             int ran = Random.Range(0, 6);
             if(ran == counter)
@@ -79,6 +82,22 @@ public class Movement : MonoBehaviour
             direction = waypoints[counter].transform.position - transform.position;
             direction = direction.normalized;
         }
+        else if(collision.gameObject.CompareTag("Egg"))
+        {
+            shotCount--;
+            this.GetComponent<Renderer>().material.color = new Color(1.0f, 1.0f, 1.0f, .25f * shotCount);
+
+            if(shotCount <= 0)
+            {
+                Destroy(this.gameObject);
+                RespawnPlane();
+            }
+        }
+    }
+
+    void RespawnPlane()
+    {
+
     }
 
     

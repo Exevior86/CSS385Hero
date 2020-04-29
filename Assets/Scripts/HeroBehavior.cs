@@ -7,7 +7,7 @@ public class HeroBehavior : MonoBehaviour {
     public float mHeroSpeed = 20f;
     private const float kHeroRotateSpeed = 1f;
 
-    public static float cooldown = .3f;
+    public static float cooldown = .2f;
     public static float cooldownTimer = 0;
 
     public Vector2 pos;
@@ -59,6 +59,7 @@ public class HeroBehavior : MonoBehaviour {
         // cast to Vector2 to ignore z-component
         transform.position = (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition);
     }
+
 
     private void HandleKeyMovement()
     {
@@ -128,12 +129,12 @@ public class HeroBehavior : MonoBehaviour {
 
     public void Shoot()
     {
-        //Vector2 actualBulletDirection = (relativeToRotation) ? (Vector2)(Quaternion.Euler(0, 0, transform.eulerAngles.z) * shootDirection) : shootDirection;
         GameObject newObject = Instantiate<GameObject>(prefabToSpawn);
         newObject.transform.position = this.transform.position;
         newObject.transform.eulerAngles = new Vector3(0f, 0f, Angle(direction));
 
         Rigidbody2D rigidbody2D = newObject.GetComponent<Rigidbody2D>();
+
         if (rigidbody2D != null)
         {
             rigidbody2D.AddForce(transform.up * shootSpeed, ForceMode2D.Impulse);
