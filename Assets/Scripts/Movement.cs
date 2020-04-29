@@ -68,6 +68,7 @@ public class Movement : MonoBehaviour
                 SetToRandomLocation();
                 shotCount = 4;
                 this.GetComponent<Renderer>().material.color = new Color(1.0f, 1.0f, 1.0f, .25f * shotCount);
+                gameController.IncrementNumEnemiesDestroyed();
             }
         }
         else if (collision.gameObject.CompareTag("Waypoint"))

@@ -10,6 +10,7 @@ public class GameController : MonoBehaviour
     private bool mRandomWaypoints;
     private bool mUsingMouseControl;
     private int mNumEnemiesTouched;
+    private int mNumEnemiesDestroyed;
 
     [SerializeField]
     private Text mRandomWaypointText;
@@ -19,6 +20,9 @@ public class GameController : MonoBehaviour
 
     [SerializeField]
     private Text mTouchedEnemiesText;
+
+    [SerializeField]
+    private Text mDestroyedEnemiesText;
 
     public GameObject[] getWayPoints()
     {
@@ -56,6 +60,11 @@ public class GameController : MonoBehaviour
         ++mNumEnemiesTouched;
     }
 
+    public void IncrementNumEnemiesDestroyed()
+    {
+        ++mNumEnemiesDestroyed;
+    }
+
     private void HandleInput()
     {
         if (Input.GetKeyDown(KeyCode.J))
@@ -85,7 +94,7 @@ public class GameController : MonoBehaviour
         }
 
         mTouchedEnemiesText.text = "Touched enemies: " + mNumEnemiesTouched;
-        //TODO
+        mDestroyedEnemiesText.text = "Destroyed enemies: " + mNumEnemiesDestroyed;
     }
 
     void Update()
